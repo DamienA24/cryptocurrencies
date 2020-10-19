@@ -1,2 +1,2 @@
 # cryptocurrencies
-ClI to display cryptocurrencies
+CLI to display cryptocurrencies
