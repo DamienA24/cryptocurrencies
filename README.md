@@ -1,2 +1,2 @@
 # cryptocurrencies
-Clit to display cryptocurrencies
+ClI to display cryptocurrencies
