@@ -1,0 +1,20 @@
+{
+  "name": "cryptocurrencies",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/DamienA24/cryptocurrencies.git",
+  "author": "Damien Alves <damien.alves@laddition.com>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "express": "^4.17.1",
+    "table": "^6.0.3"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@babel/node": "^7.12.1"
+  }
+}
