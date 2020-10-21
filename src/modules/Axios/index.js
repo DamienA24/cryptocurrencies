@@ -1,18 +1,19 @@
 import axios from "axios";
+import { displayLog } from "../../utils/index.js";
 
-const REQUEST_TIMEOUT = 20000;
+const REQUEST_TIMEOUT = 60000;
 
 export const requestHandler = async (
-  url,
+  path,
   method = "GET",
-  params,
+  params = {},
   headers = {},
   additional_options
 ) => {
   let requestOptions = {
     method,
     headers,
-    url,
+    url: `https://api.coingecko.com/api/v3/${path}`,
     timeout: REQUEST_TIMEOUT,
     ...additional_options,
   };
@@ -26,22 +27,23 @@ export const requestHandler = async (
   }
 
   axios.interceptors.request.use((req) => {
-    console.log(`${req.method} ${req.url}`);
+    displayLog("green", `interceptors request ${req.method} ${req.url}`);
     return req;
   });
 
   axios.interceptors.response.use((res) => {
-    console.log(res.data);
+    displayLog("blue", `interceptors response`);
+    console.log(res);
     return res;
   });
 
   return axios(requestOptions)
     .then((res) => {
-      return { success: true, ...res };
+      return { success: true, status: res.status, ...res.data };
     })
     .catch((err) => {
       const error = handleAxiosError(err);
-      console.error(error);
+      console.error(err);
       return { success: false, ...error };
     });
 };
@@ -53,5 +55,5 @@ const handleAxiosError = (err) => {
       data: err.response.data,
     };
   }
-  return { status: err.code, url: err.config.baseURL, request: error.request };
+  return { status: err.code, request: err.request };
 };
