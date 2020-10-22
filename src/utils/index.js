@@ -13,3 +13,20 @@ export function numberArgs() {
 export function shutServer() {
   process.exit(0);
 }
+
+export function formateArgs(args) {
+  const output = args.reduce((acc, item, index) => {
+    if (/^\[.+\]$/.test(item)) {
+      try {
+        const itemParsed = JSON.parse(item);
+        acc.push(itemParsed);
+      } catch (error) {
+        //console.log(error);
+      }
+    } else {
+      acc.push(item);
+    }
+    return acc;
+  }, []);
+  return output;
+}
