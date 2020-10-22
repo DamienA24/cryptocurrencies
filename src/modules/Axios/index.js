@@ -33,13 +33,12 @@ export const requestHandler = async (
 
   axios.interceptors.response.use((res) => {
     displayLog("blue", `interceptors response`);
-    console.log(res);
     return res;
   });
 
   return axios(requestOptions)
     .then((res) => {
-      return { success: true, status: res.status, ...res.data };
+      return { success: true, status: res.status, data: res.data };
     })
     .catch((err) => {
       const error = handleAxiosError(err);
