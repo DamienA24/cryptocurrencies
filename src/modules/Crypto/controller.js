@@ -1,25 +1,31 @@
-export const getCryptosList = () => {
-  const url = "https://api.coingecko.com/api/v3/coins/list";
-  const result = "call api";
+import { requestHandler } from "../Axios/index.js";
+import { displayLog } from "../../utils/index.js";
+
+export const getCryptosList = async () => {
+  const result = await requestHandler("coins/list");
+  return result.data;
 };
 
-export const findSelectedCryptos = () => {};
-
-export const findOptions = () => {
-  const arr = ["arg1", "arg2", "arg3", ["opt1", "opt1"]];
-
-  const options = arr.reduce(
-    (acc, ar, index) => {
-      if (Array.isArray(ar)) {
-        acc.options = ar;
+export const formateSelectedCryptos = (userSearches, cryptosList) => {
+  const formattedArgs = userSearches.reduce(
+    (acc, search) => {
+      if (Array.isArray(search)) {
+        acc.options = search;
       } else {
-        acc.cryptos = acc.cryptos ? `${acc.cryptos}, ${ar}` : ar;
+        const findCrypto = cryptosList
+          .filter((cry) => cry.symbol === search || cry.name === search)
+          .map((result) => result.id)
+          .join("");
+        acc.cryptosSlected = acc.cryptosSlected
+          ? `${acc.cryptosSlected}, ${findCrypto}`
+          : findCrypto;
       }
       return acc;
     },
     {
-      cryptos: "",
+      cryptosSlected: "",
       options: [],
     }
   );
+  return formattedArgs;
 };
