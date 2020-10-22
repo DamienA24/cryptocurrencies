@@ -14,7 +14,7 @@ export function shutServer() {
   process.exit(0);
 }
 
-export function formateArgs(args) {
+export function parseArgs(args) {
   const output = args.reduce((acc, item, index) => {
     if (/^\[.+\]$/.test(item)) {
       try {
