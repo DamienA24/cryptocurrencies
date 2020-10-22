@@ -1,7 +1,6 @@
 import express from "express";
 
 import {
-  formateSelectedCryptos,
   getCryptosSelection,
   displayCryptos,
   getCryptosList,
@@ -14,6 +13,8 @@ import {
   shutServer,
   parseArgs,
 } from "./utils/index.js";
+
+import { formateSelectedCryptos } from "./modules/Crypto/utils.js";
 
 const app = express();
 const port = 4000;
@@ -34,7 +35,6 @@ async function checkPing() {
 
 async function checkResearch() {
   const hasArgs = numberArgs();
-  console.log(hasArgs);
   if (hasArgs.length) {
     const parsedArgs = parseArgs(hasArgs);
     const list = await getCryptosList();

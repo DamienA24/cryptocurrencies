@@ -21,7 +21,7 @@ export function parseArgs(args) {
         const itemParsed = JSON.parse(item);
         acc.push(itemParsed);
       } catch (error) {
-        //console.log(error);
+        displayLog("red", "wrong options");
       }
     } else {
       acc.push(item);
