@@ -2,6 +2,8 @@ import express from "express";
 
 import {
   formateSelectedCryptos,
+  getCryptosSelection,
+  displayCryptos,
   getCryptosList,
 } from "./modules/Crypto/controller.js";
 import { requestHandler } from "./modules/Axios/index.js";
@@ -37,6 +39,10 @@ async function checkResearch() {
     const parsedArgs = parseArgs(hasArgs);
     const list = await getCryptosList();
     const formattedSlctCrypto = formateSelectedCryptos(parsedArgs, list);
+    const resultCryptoSelection = await getCryptosSelection(
+      formattedSlctCrypto
+    );
+    displayCryptos(resultCryptoSelection);
   } else {
     displayLog("blue", "missing arguments, try again");
     shutServer();
