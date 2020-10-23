@@ -1,12 +1,10 @@
 import { requestHandler } from "../Axios/index.js";
 import { displayLog } from "../../utils/index.js";
 import {
-  colorText,
-  createLineMain,
   recoverDataToCatch,
-  formateCrypto,
   createTableConfig,
-  recoverOptions,
+  createLineMain,
+  formateCrypto,
 } from "./utils.js";
 import tableImport from "table";
 const { table } = tableImport;
@@ -18,15 +16,14 @@ export const getCryptosList = async () => {
 
 export const getCryptosSelection = async (selection) => {
   const { cryptosSlected, options } = selection;
-  const userOptions = recoverOptions(options);
   const result = await requestHandler("coins/markets", "GET", {
-    vs_currency: userOptions.currency,
+    vs_currency: options.currency,
     ids: cryptosSlected,
-    order: userOptions.order,
+    order: options.order,
   });
   return {
     data: result.data,
-    currency: userOptions.currency,
+    currency: options.currency,
   };
 };
 

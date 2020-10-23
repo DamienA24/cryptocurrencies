@@ -86,7 +86,7 @@ export function formateSelectedCryptos(userSearches, cryptosList) {
   const formattedArgs = userSearches.reduce(
     (acc, search) => {
       if (Array.isArray(search)) {
-        acc.options = search;
+        acc.options = recoverOptions(search, acc.options);
       } else {
         const findCrypto = cryptosList
           .filter((cry) => cry.symbol === search || cry.name === search)
@@ -100,17 +100,17 @@ export function formateSelectedCryptos(userSearches, cryptosList) {
     },
     {
       cryptosSlected: "",
-      options: [],
+      options: {
+        currency: "eur",
+        order: "",
+      },
     }
   );
   return formattedArgs;
 }
 
-export function recoverOptions(userOptions) {
-  let options = {
-    currency: "eur",
-    order: "",
-  };
+export function recoverOptions(userOptions, initialOptions) {
+  let options = initialOptions
   const availableCurrency = ["eur", "usd", "jpy", "gbp"];
   if (userOptions.length) {
     const [currency, order] = userOptions;
