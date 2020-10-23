@@ -8,10 +8,13 @@ import {
 import { requestHandler } from "./modules/Axios/index.js";
 
 import {
+  startLoader,
+  stopLoader,
   displayLog,
   numberArgs,
   shutServer,
   parseArgs,
+  addSpace,
 } from "./utils/index.js";
 
 import { formateSelectedCryptos } from "./modules/Crypto/utils.js";
@@ -21,19 +24,23 @@ const port = 4000;
 
 app.listen(port, async () => {
   displayLog("yellow", `server listening on port ${port}`);
-  checkPing();
-  checkResearch();
+  addSpace();
+  const loaderInstance = startLoader("Loading data");
+  addSpace();
+  checkPing(loaderInstance);
+  checkResearch(loaderInstance);
 });
 
-async function checkPing() {
+async function checkPing(loaderInstance) {
   const resultPing = await requestHandler("ping");
   if (resultPing.status !== 200) {
     displayLog("green", "data not available");
+    stopLoader(loaderInstance, "fail");
     shutServer();
   }
 }
 
-async function checkResearch() {
+async function checkResearch(loaderInstance) {
   const hasArgs = numberArgs();
   if (hasArgs.length) {
     const parsedArgs = parseArgs(hasArgs);
@@ -42,8 +49,23 @@ async function checkResearch() {
     const resultCryptoSelection = await getCryptosSelection(
       formattedSlctCrypto
     );
-    displayCryptos(resultCryptoSelection);
+    if (resultCryptoSelection.data.length) {
+      stopLoader(loaderInstance, "succeed");
+      addSpace();
+      displayCryptos(resultCryptoSelection);
+      setInterval(async () => {
+        const newInstance = startLoader("Refreshing data");
+        const resultCryptoSelection = await getCryptosSelection(
+          formattedSlctCrypto
+        );
+        stopLoader(newInstance, "succeed");
+        addSpace();
+        displayCryptos(resultCryptoSelection);
+      }, 10000);
+    }
   } else {
+    stopLoader(loaderInstance, "warn");
+    addSpace();
     displayLog("blue", "missing arguments, try again");
     shutServer();
   }
