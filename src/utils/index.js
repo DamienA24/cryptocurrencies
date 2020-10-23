@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import ora from "ora";
 
 const log = console.log;
 
@@ -29,4 +30,28 @@ export function parseArgs(args) {
     return acc;
   }, []);
   return output;
+}
+
+export function startLoader(text) {
+  const spinner = ora(text).start();
+  return spinner;
+}
+
+export function stopLoader(oraInstance, status) {
+  switch (status) {
+    case "succeed":
+      oraInstance.succeed();
+      break;
+    case "warn":
+      oraInstance.warn();
+      break;
+    case "fail":
+      oraInstance.fail();
+    default:
+      oraInstance.stop();
+  }
+}
+
+export function addSpace() {
+  process.stdout.write("\n");
 }
