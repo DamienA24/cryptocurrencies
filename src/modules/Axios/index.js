@@ -26,16 +26,6 @@ export const requestHandler = async (
     }
   }
 
-  axios.interceptors.request.use((req) => {
-    displayLog("green", `interceptors request ${req.method} ${req.url}`);
-    return req;
-  });
-
-  axios.interceptors.response.use((res) => {
-    displayLog("blue", `interceptors response`);
-    return res;
-  });
-
   return axios(requestOptions)
     .then((res) => {
       return { success: true, status: res.status, data: res.data };
