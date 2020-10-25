@@ -1,19 +1,21 @@
 import axios from "axios";
-import { displayLog } from "../../utils/index.js";
+import { availableApi } from "./utils.js";
 
 const REQUEST_TIMEOUT = 60000;
 
 export const requestHandler = async (
+  apiKey,
   path,
   method = "GET",
   params = {},
   headers = {},
   additional_options
 ) => {
+  const api = availableApi(apiKey);
   let requestOptions = {
     method,
     headers,
-    url: `https://api.coingecko.com/api/v3/${path}`,
+    url: `${api}${path}`,
     timeout: REQUEST_TIMEOUT,
     ...additional_options,
   };
@@ -33,6 +35,7 @@ export const requestHandler = async (
     .catch((err) => {
       const error = handleAxiosError(err);
       console.error(err);
+      
       return { success: false, ...error };
     });
 };
