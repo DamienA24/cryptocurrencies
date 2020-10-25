@@ -1,45 +1,50 @@
 import { requestHandler } from "../Axios/index.js";
-import { displayLog } from "../../utils/index.js";
 import {
   recoverDataToCatch,
   createTableConfig,
+  sortCryptoResult,
+  customizeCrypto,
   createLineMain,
-  formateCrypto,
+  changeKeyName,
 } from "./utils.js";
 import tableImport from "table";
 const { table } = tableImport;
 
-export const getCryptosList = async () => {
-  const result = await requestHandler("coins/list");
+export const getCryptosList = async (api, url) => {
+  const result = await requestHandler(api, url);
   return result.data;
 };
 
-export const getCryptosSelection = async (selection) => {
-  const { cryptosSlected, options } = selection;
-  const result = await requestHandler("coins/markets", "GET", {
+export const getCryptosSelection = async (selection, options) => {
+  const { cryptosSlected } = selection;
+  const result = await requestHandler(options.api, "coins/markets", "GET", {
     vs_currency: options.currency,
     ids: cryptosSlected,
-    order: options.order,
   });
+  const newArray = changeKeyName(result.data, [
+    { keyToChange: "market_cap_rank", changeTo: "rank" },
+    { keyToChange: "current_price", changeTo: "price" },
+  ]);
   return {
-    data: result.data,
+    data: newArray,
     currency: options.currency,
   };
 };
 
-export const displayCryptos = (cryptos) => {
-  const data = cryptos.data.reduce(
+export const displayCryptos = (cryptos, options) => {
+  const sortResult = sortCryptoResult(options.filter, cryptos);
+  const data = sortResult.reduce(
     (acc, crypto) => {
-      const dataToCapture = recoverDataToCatch();
-      const dataCaptured = formateCrypto(
+      const dataToCapture = recoverDataToCatch(options.api);
+      const dataCaptured = customizeCrypto(
         dataToCapture,
         crypto,
-        cryptos.currency
+        options.currency
       );
       acc.push(dataCaptured);
       return acc;
     },
-    [createLineMain()]
+    [createLineMain(options.api)]
   );
   const config = createTableConfig(2, 7, {
     alignment: "right",
