@@ -12,10 +12,12 @@ What you can do :
 - Choose options
 
 Available options :
-- Currency ["eur", "gbp", "usd", "jpy"]
-- Alternative API ["coingecko", "altercoin"]
-- Ordering ascendant or descendant by price, market cap or rank 
-    [
+- Currency :
+    - ["eur", "gbp", "usd", "jpy"]
+- Alternative API :
+    - ["coingecko", "altercoin"]
+- Ordering ascendant or descendant by price, market cap or rank :
+   -  [
     "rank_asc",
     "rank_des",
     "market_cap_des",
