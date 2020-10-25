@@ -2,22 +2,24 @@ import express from "express";
 
 import {
   getCryptosSelection,
-  displayCryptos,
   getCryptosList,
 } from "./modules/Crypto/controller.js";
-import { requestHandler } from "./modules/Axios/index.js";
 
 import {
+  displayResult,
+  displayAlert,
   startLoader,
-  stopLoader,
   displayLog,
   numberArgs,
-  shutServer,
   parseArgs,
   addSpace,
 } from "./utils/index.js";
 
-import { formateSelectedCryptos } from "./modules/Crypto/utils.js";
+import {
+  formateSelectedCryptos,
+  recoverOptions,
+  findCryptos,
+} from "./modules/Crypto/utils.js";
 
 const app = express();
 const port = 4000;
@@ -27,46 +29,76 @@ app.listen(port, async () => {
   addSpace();
   const loaderInstance = startLoader("Loading data");
   addSpace();
-  checkPing(loaderInstance);
   checkResearch(loaderInstance);
 });
-
-async function checkPing(loaderInstance) {
-  const resultPing = await requestHandler("ping");
-  if (resultPing.status !== 200) {
-    displayLog("green", "data not available");
-    stopLoader(loaderInstance, "fail");
-    shutServer();
-  }
-}
 
 async function checkResearch(loaderInstance) {
   const hasArgs = numberArgs();
   if (hasArgs.length) {
     const parsedArgs = parseArgs(hasArgs);
-    const list = await getCryptosList();
-    const formattedSlctCrypto = formateSelectedCryptos(parsedArgs, list);
-    const resultCryptoSelection = await getCryptosSelection(
-      formattedSlctCrypto
-    );
-    if (resultCryptoSelection.data.length) {
-      stopLoader(loaderInstance, "succeed");
-      addSpace();
-      displayCryptos(resultCryptoSelection);
-      setInterval(async () => {
-        const newInstance = startLoader("Refreshing data");
+    const setOptions = recoverOptions(parsedArgs.options);
+    if (setOptions.api === "coingecko") {
+      const list = await getCryptosList(setOptions.api, "coins/list");
+      const formattedSlctCrypto = formateSelectedCryptos(
+        parsedArgs.cryptos,
+        list
+      );
+      if (formattedSlctCrypto.cryptosSlected) {
         const resultCryptoSelection = await getCryptosSelection(
-          formattedSlctCrypto
+          formattedSlctCrypto,
+          setOptions
         );
-        stopLoader(newInstance, "succeed");
-        addSpace();
-        displayCryptos(resultCryptoSelection);
-      }, 10000);
+        if (resultCryptoSelection.data.length) {
+          displayResult(resultCryptoSelection.data, setOptions, loaderInstance);
+          refreshData(formattedSlctCrypto, setOptions);
+        } else {
+          displayAlert(loaderInstance, "red", "No data found", "warn");
+        }
+      } else {
+        displayAlert(loaderInstance, "red", "No data found", "warn");
+      }
+    } else {
+      const url = `?structure=array&convert=${setOptions.currency}`;
+      const list = await getCryptosList(setOptions.api, url);
+      const resultCryptoSelection = findCryptos(
+        parsedArgs.cryptos,
+        list.data,
+        setOptions.currency
+      );
+      if (resultCryptoSelection.length) {
+        displayResult(resultCryptoSelection, setOptions, loaderInstance);
+        refreshData(parsedArgs.cryptos, setOptions, url);
+      } else {
+        displayAlert(loaderInstance, "red", "No data found", "warn");
+      }
     }
   } else {
-    stopLoader(loaderInstance, "warn");
-    addSpace();
-    displayLog("blue", "missing arguments, try again");
-    shutServer();
+    displayAlert(
+      loaderInstance,
+      "blue",
+      "missing arguments, try again",
+      "fail"
+    );
   }
+}
+
+function refreshData(formattedCrypto, options, url) {
+  setInterval(async () => {
+    const instanceLoader = startLoader("Refreshing data");
+    let resultCryptoSelection = [];
+    if (options.api === "coingecko") {
+      const result = await getCryptosSelection(formattedCrypto, options);
+      resultCryptoSelection = result.data;
+    } else {
+      const list = await getCryptosList(options.api, url);
+      const result = findCryptos(formattedCrypto, list.data, options.currency);
+      resultCryptoSelection = result;
+    }
+
+    if (resultCryptoSelection.length) {
+      displayResult(resultCryptoSelection, options, instanceLoader);
+    } else {
+      displayAlert(loaderInstance, "red", "No data found", "warn");
+    }
+  }, 10000);
 }
