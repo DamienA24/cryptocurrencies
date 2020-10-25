@@ -183,9 +183,13 @@ export function recoverOptions(userOptions) {
 }
 
 export function findCryptos(selection, list, currency) {
-  const formateSelection = selection.map((sel) => sel.toUpperCase());
+  const formateSelection = selection.map((sel) => sel.toLowerCase());
   const selectedCryptos = formateSelection.reduce((acc, selec) => {
-    const selectCrypto = list.find((item) => item.symbol === selec);
+    const selectCrypto = list.find(
+      (item) =>
+        item.symbol.toLowerCase() === selec ||
+        item.website_slug.toLowerCase() === selec
+    );
     if (selectCrypto) {
       const newobj = { ...selectCrypto.quotes[currency], ...selectCrypto };
       delete newobj.quotes;
