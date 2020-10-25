@@ -1,6 +1,8 @@
 import chalk from "chalk";
 import ora from "ora";
 
+import { displayCryptos } from "../modules/Crypto/controller.js";
+
 const log = console.log;
 
 export function displayLog(color, message) {
@@ -16,19 +18,25 @@ export function shutServer() {
 }
 
 export function parseArgs(args) {
-  const output = args.reduce((acc, item, index) => {
-    if (/^\[.+\]$/.test(item)) {
-      try {
-        const itemParsed = JSON.parse(item);
-        acc.push(itemParsed);
-      } catch (error) {
-        displayLog("red", "wrong options");
+  const output = args.reduce(
+    (acc, item, index) => {
+      if (/^\[.+\]$/.test(item)) {
+        try {
+          const itemParsed = JSON.parse(item);
+          acc.options = itemParsed;
+        } catch (error) {
+          displayLog("red", "wrong options");
+        }
+      } else {
+        acc.cryptos.push(item.toLowerCase());
       }
-    } else {
-      acc.push(item);
+      return acc;
+    },
+    {
+      cryptos: [],
+      options: [],
     }
-    return acc;
-  }, []);
+  );
   return output;
 }
 
@@ -40,7 +48,9 @@ export function startLoader(text) {
 export function stopLoader(oraInstance, status) {
   switch (status) {
     case "succeed":
-      oraInstance.succeed();
+      const date = new Date();
+      const str = `Data recover to ${date}`;
+      oraInstance.succeed(str);
       break;
     case "warn":
       oraInstance.warn();
@@ -54,4 +64,17 @@ export function stopLoader(oraInstance, status) {
 
 export function addSpace() {
   process.stdout.write("\n");
+}
+
+export function displayResult(cryptSelection, options, loaderInstance) {
+  stopLoader(loaderInstance, "succeed");
+  addSpace();
+  displayCryptos(cryptSelection, options);
+}
+
+export function displayAlert(loaderInstance, color, message, status) {
+  stopLoader(loaderInstance, status);
+  addSpace();
+  displayLog(color, message);
+  shutServer();
 }
