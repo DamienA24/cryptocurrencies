@@ -151,7 +151,7 @@ export function recoverOptions(userOptions) {
     filter: "rank_asc",
     api: "coingecko",
   };
-  const availableCurrency = ["eur", "usd", "jpy", "gbp"];
+  const availableCurrency = ["EUR", "USD", "JPY", "GBP"];
   const availableFilter = [
     "rank_asc",
     "rank_des",
@@ -164,10 +164,10 @@ export function recoverOptions(userOptions) {
 
   if (userOptions.length) {
     const [currency, order, api] = userOptions;
-    const lowerCaseCurrency = currency && currency.toLowerCase();
-    options.currency = availableCurrency.includes(lowerCaseCurrency)
-      ? lowerCaseCurrency
-      : "eur";
+    const upperCaseCurrency = currency && currency.toUpperCase();
+    options.currency = availableCurrency.includes(upperCaseCurrency)
+      ? upperCaseCurrency
+      : "EUR";
 
     const lowerCaseFilter = order && order.toLowerCase();
     options.filter = availableFilter.includes(lowerCaseFilter)
