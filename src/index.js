@@ -27,13 +27,12 @@ const port = 4000;
 app.listen(port, async () => {
   displayLog("yellow", `server listening on port ${port}`);
   addSpace();
-  const loaderInstance = startLoader("Loading data");
-  addSpace();
-  checkResearch(loaderInstance);
+  checkResearch();
 });
 
-async function checkResearch(loaderInstance) {
+async function checkResearch() {
   const hasArgs = numberArgs();
+  const loaderInstance = startLoader("Loading data");
   if (hasArgs.length) {
     const parsedArgs = parseArgs(hasArgs);
     const setOptions = recoverOptions(parsedArgs.options);
