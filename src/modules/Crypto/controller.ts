@@ -1,3 +1,4 @@
+import { FormattedArgs } from '../../utils/interfaceValidator';
 import { requestHandler } from '../Axios/index';
 import {
   recoverDataToCatch,
@@ -8,14 +9,33 @@ import {
   changeKeyName
 } from './utils';
 import * as tableImport from 'table';
+
 const { table } = tableImport;
 
-export const getCryptosList = async (api, url) => {
+interface ResultData {
+  id: number | string;
+  name: string;
+  symbol: string;
+  website_slug: string;
+  rank: number;
+  circulating_supply: number;
+  total_supply: number;
+  max_supply: number;
+  quotes: object;
+  last_updated: number;
+}
+export const getCryptosList = async (
+  api: string,
+  url: string
+): Promise<Array<ResultData>> => {
   const result = await requestHandler(api, url, '', {}, {}, '');
-  return result.data;
+  return api === 'coingecko' ? result.data : result.data.data;
 };
 
-export const getCryptosSelection = async (selection, options) => {
+export const getCryptosSelection = async (
+  selection: FormattedArgs,
+  options
+) => {
   const { cryptosSlected } = selection;
   const result = await requestHandler(
     options.api,

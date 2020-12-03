@@ -1,5 +1,6 @@
 import express from 'express';
 
+import { FormattedArgs } from './utils/interfaceValidator';
 import {
   getCryptosSelection,
   getCryptosList
@@ -14,7 +15,6 @@ import {
   parseArgs,
   addSpace
 } from './utils';
-
 import {
   formateSelectedCryptos,
   recoverOptions,
@@ -22,7 +22,7 @@ import {
 } from './modules/Crypto/utils';
 
 const app = express();
-const port = 4000;
+const port: number = 4000;
 
 app.listen(port, async () => {
   displayLog('yellow', `server listening on port ${port}`);
@@ -31,17 +31,17 @@ app.listen(port, async () => {
 });
 
 async function checkResearch() {
-  const hasArgs = numberArgs();
-  const loaderInstance = startLoader('Loading data');
+  const hasArgs = numberArgs(); //checked
+  const loaderInstance = startLoader('Loading data'); //checked
   if (hasArgs.length) {
-    const parsedArgs = parseArgs(hasArgs);
-    const setOptions = recoverOptions(parsedArgs.options);
+    const parsedArgs = parseArgs(hasArgs); //checked
+    const setOptions = recoverOptions(parsedArgs.options); //checked
     if (setOptions.api === 'coingecko') {
-      const list = await getCryptosList(setOptions.api, 'coins/list');
+      const list = await getCryptosList(setOptions.api, 'coins/list'); //checked
       const formattedSlctCrypto = formateSelectedCryptos(
         parsedArgs.cryptos,
         list
-      );
+      ); //checked
       if (formattedSlctCrypto.cryptosSlected) {
         const resultCryptoSelection = await getCryptosSelection(
           formattedSlctCrypto,
@@ -61,12 +61,12 @@ async function checkResearch() {
       const list = await getCryptosList(setOptions.api, url);
       const resultCryptoSelection = findCryptos(
         parsedArgs.cryptos,
-        list.data,
+        list,
         setOptions.currency
       );
       if (resultCryptoSelection.length) {
         displayResult(resultCryptoSelection, setOptions, loaderInstance);
-        refreshData(parsedArgs.cryptos, setOptions, url);
+        refreshData(parsedArgs, setOptions, url);
       } else {
         displayAlert(loaderInstance, 'red', 'No data found', 'warn');
       }
@@ -81,7 +81,16 @@ async function checkResearch() {
   }
 }
 
-function refreshData(formattedCrypto, options, url) {
+interface Options {
+  api: string;
+  currency: string;
+}
+
+function refreshData(
+  formattedCrypto: FormattedArgs,
+  options: Options,
+  url: string
+) {
   setInterval(async () => {
     const instanceLoader = startLoader('Refreshing data');
     let resultCryptoSelection = [];
@@ -90,7 +99,11 @@ function refreshData(formattedCrypto, options, url) {
       resultCryptoSelection = result.data;
     } else {
       const list = await getCryptosList(options.api, url);
-      const result = findCryptos(formattedCrypto, list.data, options.currency);
+      const result = findCryptos(
+        formattedCrypto.cryptos,
+        list,
+        options.currency
+      );
       resultCryptoSelection = result;
     }
 

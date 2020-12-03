@@ -1,10 +1,12 @@
 import chalk from 'chalk';
 
+import { FormattedArgs } from '../../utils/interfaceValidator';
+
 export function colorText(color, text) {
   return chalk[color](text);
 }
 
-export function     createLineMain(api) {
+export function createLineMain(api) {
   const line = {
     coingecko: [
       'Rank',
@@ -121,8 +123,15 @@ export function createTableConfig(start, stop, spec) {
 
   return obj;
 }
-
-export function formateSelectedCryptos(userSearches, cryptosList) {
+interface CryptosList {
+  symbol: string;
+  name: string;
+  id: number | string;
+}
+export function formateSelectedCryptos(
+  userSearches: Array<string>,
+  cryptosList: Array<CryptosList>
+): FormattedArgs {
   const formattedArgs = userSearches.reduce(
     (acc, search) => {
       const findCrypto = cryptosList
@@ -144,9 +153,13 @@ export function formateSelectedCryptos(userSearches, cryptosList) {
   );
   return formattedArgs;
 }
-
-export function recoverOptions(userOptions) {
-  const options = {
+interface Options {
+  currency: string;
+  filter: string;
+  api: string;
+}
+export function recoverOptions(userOptions: Array<string>): Options {
+  const options: Options = {
     currency: 'eur',
     filter: 'rank_asc',
     api: 'coingecko'

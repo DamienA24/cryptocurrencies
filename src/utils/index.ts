@@ -2,14 +2,15 @@ import chalk from 'chalk';
 import ora from 'ora';
 
 import { displayCryptos } from '../modules/Crypto/controller';
+import { FormattedArgs } from './interfaceValidator';
 
 const log = console.log;
 
-export function     displayLog(color, message) {
+export function displayLog(color: string, message: string): void {
   return log(chalk[color](message));
 }
 
-export function numberArgs() {
+export function numberArgs(): Array<string> {
   return process.argv.slice(2);
 }
 
@@ -17,7 +18,7 @@ export function shutServer() {
   process.exit(0);
 }
 
-export function parseArgs(args) {
+export function parseArgs(args: Array<string>): FormattedArgs {
   const output = args.reduce(
     (acc, item, index) => {
       if (/^\[.+\]$/.test(item)) {
@@ -40,7 +41,7 @@ export function parseArgs(args) {
   return output;
 }
 
-export function startLoader(text) {
+export function startLoader(text: string): object {
   const spinner = ora(text).start();
   return spinner;
 }
@@ -62,7 +63,7 @@ export function stopLoader(oraInstance, status) {
   }
 }
 
-export function addSpace() {
+export function addSpace(): void {
   process.stdout.write('\n');
 }
 
