@@ -1,31 +1,31 @@
-import chalk from "chalk";
+import chalk from 'chalk';
 
 export function colorText(color, text) {
   return chalk[color](text);
 }
 
-export function createLineMain(api) {
+export function     createLineMain(api) {
   const line = {
     coingecko: [
-      "Rank",
-      "Name",
-      "Price",
-      "High 24h",
-      "Low 24h",
-      "Change 24h (%)",
-      "Market cap",
-      "Total volume",
+      'Rank',
+      'Name',
+      'Price',
+      'High 24h',
+      'Low 24h',
+      'Change 24h (%)',
+      'Market cap',
+      'Total volume'
     ],
     altercoin: [
-      "Rank",
-      "Name",
-      "Price",
-      "Change 1h (%)",
-      "Change 24h (%)",
-      "Change 7d (%)",
-      "Market cap",
-      "Circulating supply",
-    ],
+      'Rank',
+      'Name',
+      'Price',
+      'Change 1h (%)',
+      'Change 24h (%)',
+      'Change 7d (%)',
+      'Market cap',
+      'Circulating supply'
+    ]
   };
   return line[api];
 }
@@ -33,39 +33,39 @@ export function createLineMain(api) {
 export function recoverDataToCatch(api) {
   const data = {
     coingecko: [
-      "rank",
-      "name",
-      "price",
-      "high_24h",
-      "low_24h",
-      "price_change_percentage_24h",
-      "market_cap",
-      "total_volume",
+      'rank',
+      'name',
+      'price',
+      'high_24h',
+      'low_24h',
+      'price_change_percentage_24h',
+      'market_cap',
+      'total_volume'
     ],
     altercoin: [
-      "rank",
-      "name",
-      "price",
-      "percent_change_1h",
-      "percent_change_24h",
-      "percent_change_7d",
-      "market_cap",
-      "circulating_supply",
-    ],
+      'rank',
+      'name',
+      'price',
+      'percent_change_1h',
+      'percent_change_24h',
+      'percent_change_7d',
+      'market_cap',
+      'circulating_supply'
+    ]
   };
   return data[api];
 }
 
 export function formateSum(value, currency, style) {
   switch (style) {
-    case "currency":
-      return value.toLocaleString("en-US", {
+    case 'currency':
+      return value.toLocaleString('en-US', {
         style,
-        currency,
+        currency
       });
-    case "decimal":
-      return value.toLocaleString("en-US", {
-        style,
+    case 'decimal':
+      return value.toLocaleString('en-US', {
+        style
       });
     default:
       break;
@@ -74,47 +74,47 @@ export function formateSum(value, currency, style) {
 
 export function customizeCrypto(dataToCatch, crypto, currency) {
   return dataToCatch.map((item) => {
-    let value = "";
+    let value = '';
     switch (item) {
-      case "price_change_percentage_24h":
-      case "percent_change_1h":
-      case "percent_change_24h":
-      case "percent_change_7d":
+      case 'price_change_percentage_24h':
+      case 'percent_change_1h':
+      case 'percent_change_24h':
+      case 'percent_change_7d':
         value = crypto[item].toFixed(2);
-        return value > 0
-          ? colorText("green", `▲ ${value}%`)
-          : colorText("red", `▼ ${value}%`);
-      case "price":
-      case "market_cap":
-        value = formateSum(crypto[item], currency, "currency");
-        return colorText("yellow", value);
-      case "high_24h":
-        value = formateSum(crypto[item], currency, "decimal");
-        return colorText("green", value);
-      case "low_24h":
-        value = formateSum(crypto[item], currency, "decimal");
-        return colorText("red", value);
-      case "total_volume":
-        value = formateSum(crypto[item], currency, "currency");
-        return colorText("blue", value);
-      case "circulating_supply":
-        value = formateSum(crypto[item], currency, "decimal");
-        return colorText("blue", value);
-      case "name":
+        return crypto[item] > 0
+          ? colorText('green', `▲ ${value}%`)
+          : colorText('red', `▼ ${value}%`);
+      case 'price':
+      case 'market_cap':
+        value = formateSum(crypto[item], currency, 'currency');
+        return colorText('yellow', value);
+      case 'high_24h':
+        value = formateSum(crypto[item], currency, 'decimal');
+        return colorText('green', value);
+      case 'low_24h':
+        value = formateSum(crypto[item], currency, 'decimal');
+        return colorText('red', value);
+      case 'total_volume':
+        value = formateSum(crypto[item], currency, 'currency');
+        return colorText('blue', value);
+      case 'circulating_supply':
+        value = formateSum(crypto[item], currency, 'decimal');
+        return colorText('blue', value);
+      case 'name':
         value = crypto[item];
-        return colorText("magenta", value);
+        return colorText('magenta', value);
       default:
         value = crypto[item];
-        return colorText("cyan", value);
+        return colorText('cyan', value);
     }
   });
 }
 
 export function createTableConfig(start, stop, spec) {
-  let obj = {};
+  const obj = { columns: {} };
   for (let index = start; index <= stop; index++) {
     const element = {
-      [index]: spec,
+      [index]: spec
     };
     obj.columns = { ...obj.columns, ...element };
   }
@@ -132,52 +132,52 @@ export function formateSelectedCryptos(userSearches, cryptosList) {
             cry.name.toLowerCase() === search
         )
         .map((result) => result.id)
-        .join("");
+        .join('');
       acc.cryptosSlected = acc.cryptosSlected
         ? `${acc.cryptosSlected}, ${findCrypto}`
         : findCrypto;
       return acc;
     },
     {
-      cryptosSlected: "",
+      cryptosSlected: ''
     }
   );
   return formattedArgs;
 }
 
 export function recoverOptions(userOptions) {
-  let options = {
-    currency: "eur",
-    filter: "rank_asc",
-    api: "coingecko",
+  const options = {
+    currency: 'eur',
+    filter: 'rank_asc',
+    api: 'coingecko'
   };
-  const availableCurrency = ["EUR", "USD", "JPY", "GBP"];
+  const availableCurrency = ['EUR', 'USD', 'JPY', 'GBP'];
   const availableFilter = [
-    "rank_asc",
-    "rank_des",
-    "market_cap_des",
-    "market_cap_asc",
-    "price_asc",
-    "price_desc",
+    'rank_asc',
+    'rank_des',
+    'market_cap_des',
+    'market_cap_asc',
+    'price_asc',
+    'price_desc'
   ];
-  const availableApi = ["coingecko", "altercoin"];
+  const availableApi = ['coingecko', 'altercoin'];
 
   if (userOptions.length) {
     const [currency, order, api] = userOptions;
     const upperCaseCurrency = currency && currency.toUpperCase();
     options.currency = availableCurrency.includes(upperCaseCurrency)
       ? upperCaseCurrency
-      : "EUR";
+      : 'EUR';
 
     const lowerCaseFilter = order && order.toLowerCase();
     options.filter = availableFilter.includes(lowerCaseFilter)
       ? lowerCaseFilter
-      : "rank_asc";
+      : 'rank_asc';
 
     const lowerCaseApi = api && api.toLowerCase();
     options.api = availableApi.includes(lowerCaseApi)
       ? lowerCaseApi
-      : "coingecko";
+      : 'coingecko';
   }
   return options;
 }
@@ -212,7 +212,7 @@ export function changeKeyName(list, dataTochange) {
 
 export function sortCryptoResult(sortType, list) {
   const direction = findFilter(sortType);
-  if (direction.direction === "asc") {
+  if (direction.direction === 'asc') {
     return list.sort((a, b) => {
       return a[direction.filter] - b[direction.filter];
     });
@@ -222,10 +222,10 @@ export function sortCryptoResult(sortType, list) {
 }
 
 function findFilter(sortType) {
-  const str = sortType.split("_");
+  const str = sortType.split('_');
   const direction = str.splice(str.length - 1).join();
   return {
-    filter: str.join("_"),
-    direction,
+    filter: str.join('_'),
+    direction
   };
 }
