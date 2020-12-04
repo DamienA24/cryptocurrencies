@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { FormattedArgs } from './utils/interfaceValidator';
+import { FormattedArgs, Options } from './utils/interfaceValidator';
 import {
   getCryptosSelection,
   getCryptosList
@@ -22,7 +22,7 @@ import {
 } from './modules/Crypto/utils';
 
 const app = express();
-const port: number = 4000;
+const port = 4000;
 
 app.listen(port, async () => {
   displayLog('yellow', `server listening on port ${port}`);
@@ -30,18 +30,18 @@ app.listen(port, async () => {
   checkResearch();
 });
 
-async function checkResearch() {
-  const hasArgs = numberArgs(); //checked
-  const loaderInstance = startLoader('Loading data'); //checked
+async function checkResearch(): Promise<void> {
+  const hasArgs = numberArgs();
+  const loaderInstance = startLoader('Loading data');
   if (hasArgs.length) {
-    const parsedArgs = parseArgs(hasArgs); //checked
-    const setOptions = recoverOptions(parsedArgs.options); //checked
+    const parsedArgs = parseArgs(hasArgs);
+    const setOptions = recoverOptions(parsedArgs.options);
     if (setOptions.api === 'coingecko') {
-      const list = await getCryptosList(setOptions.api, 'coins/list'); //checked
+      const list = await getCryptosList(setOptions.api, 'coins/list');
       const formattedSlctCrypto = formateSelectedCryptos(
         parsedArgs.cryptos,
         list
-      ); //checked
+      );
       if (formattedSlctCrypto.cryptosSlected) {
         const resultCryptoSelection = await getCryptosSelection(
           formattedSlctCrypto,
@@ -81,16 +81,11 @@ async function checkResearch() {
   }
 }
 
-interface Options {
-  api: string;
-  currency: string;
-}
-
 function refreshData(
   formattedCrypto: FormattedArgs,
   options: Options,
   url: string
-) {
+): void {
   setInterval(async () => {
     const instanceLoader = startLoader('Refreshing data');
     let resultCryptoSelection = [];

@@ -1,12 +1,16 @@
 import chalk from 'chalk';
 
-import { FormattedArgs } from '../../utils/interfaceValidator';
+import {
+  FormattedArgs,
+  ResultData,
+  Options
+} from '../../utils/interfaceValidator';
 
-export function colorText(color, text) {
+export function colorText(color: string, text: string): string {
   return chalk[color](text);
 }
 
-export function createLineMain(api) {
+export function createLineMain(api: string): Array<string> {
   const line = {
     coingecko: [
       'Rank',
@@ -32,7 +36,7 @@ export function createLineMain(api) {
   return line[api];
 }
 
-export function recoverDataToCatch(api) {
+export function recoverDataToCatch(api: string): Array<string> {
   const data = {
     coingecko: [
       'rank',
@@ -58,7 +62,11 @@ export function recoverDataToCatch(api) {
   return data[api];
 }
 
-export function formateSum(value, currency, style) {
+export function formateSum(
+  value: number,
+  currency: string,
+  style: string
+): string {
   switch (style) {
     case 'currency':
       return value.toLocaleString('en-US', {
@@ -74,7 +82,11 @@ export function formateSum(value, currency, style) {
   }
 }
 
-export function customizeCrypto(dataToCatch, crypto, currency) {
+export function customizeCrypto(
+  dataToCatch: Array<string>,
+  crypto: object,
+  currency: string
+) {
   return dataToCatch.map((item) => {
     let value = '';
     switch (item) {
@@ -112,7 +124,17 @@ export function customizeCrypto(dataToCatch, crypto, currency) {
   });
 }
 
-export function createTableConfig(start, stop, spec) {
+interface Spec {
+  alignment: string;
+}
+interface Obj {
+  columns: object;
+}
+export function createTableConfig(
+  start: number,
+  stop: number,
+  spec: Spec
+): Obj {
   const obj = { columns: {} };
   for (let index = start; index <= stop; index++) {
     const element = {
@@ -153,11 +175,6 @@ export function formateSelectedCryptos(
   );
   return formattedArgs;
 }
-interface Options {
-  currency: string;
-  filter: string;
-  api: string;
-}
 export function recoverOptions(userOptions: Array<string>): Options {
   const options: Options = {
     currency: 'eur',
@@ -195,7 +212,11 @@ export function recoverOptions(userOptions: Array<string>): Options {
   return options;
 }
 
-export function findCryptos(selection, list, currency) {
+export function findCryptos(
+  selection: Array<string>,
+  list: Array<ResultData>,
+  currency: string
+): Array<object> {
   const formateSelection = selection.map((sel) => sel.toLowerCase());
   const selectedCryptos = formateSelection.reduce((acc, selec) => {
     const selectCrypto = list.find(
@@ -213,7 +234,14 @@ export function findCryptos(selection, list, currency) {
   return selectedCryptos;
 }
 
-export function changeKeyName(list, dataTochange) {
+interface ObjectDataTochange {
+  keyToChange: string;
+  changeTo: string;
+}
+export function changeKeyName(
+  list: Array<ResultData>,
+  dataTochange: Array<ObjectDataTochange>
+): Array<ResultData> {
   return list.map((item) => {
     dataTochange.forEach((element) => {
       item[element.changeTo] = item[element.keyToChange];
@@ -223,7 +251,10 @@ export function changeKeyName(list, dataTochange) {
   });
 }
 
-export function sortCryptoResult(sortType, list) {
+export function sortCryptoResult(
+  sortType: string,
+  list: Array<object>
+): Array<object> {
   const direction = findFilter(sortType);
   if (direction.direction === 'asc') {
     return list.sort((a, b) => {
@@ -234,7 +265,11 @@ export function sortCryptoResult(sortType, list) {
   }
 }
 
-function findFilter(sortType) {
+interface ResultFindFilter {
+  filter: string;
+  direction: string;
+}
+function findFilter(sortType: string): ResultFindFilter {
   const str = sortType.split('_');
   const direction = str.splice(str.length - 1).join();
   return {

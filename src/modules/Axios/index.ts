@@ -1,15 +1,14 @@
 import axios from 'axios';
 import { availableApi } from './utils';
-
 const REQUEST_TIMEOUT = 60000;
 
 export const requestHandler = async (
-  apiKey,
-  path,
-  method = 'GET',
-  params = {},
-  headers = {},
-  additional_options
+  apiKey: string,
+  path: string,
+  method: string = 'GET',
+  params: object = {},
+  headers: object = {},
+  additional_options: any
 ) => {
   const api = availableApi(apiKey);
   const requestOptions = {
@@ -40,7 +39,22 @@ export const requestHandler = async (
     });
 };
 
-const handleAxiosError = (err) => {
+interface RequestError {
+  response: {
+    status: number;
+    data: any;
+  };
+  code: number;
+  request: string;
+}
+
+interface ResponseError {
+  status: number;
+  data?: any;
+  request?: string;
+}
+
+const handleAxiosError = (err: RequestError): ResponseError => {
   if (err.response) {
     return {
       status: err.response.status,

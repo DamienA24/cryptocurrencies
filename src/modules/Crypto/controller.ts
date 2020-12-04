@@ -1,4 +1,8 @@
-import { FormattedArgs } from '../../utils/interfaceValidator';
+import {
+  FormattedArgs,
+  ResultData,
+  Options
+} from '../../utils/interfaceValidator';
 import { requestHandler } from '../Axios/index';
 import {
   recoverDataToCatch,
@@ -12,18 +16,6 @@ import * as tableImport from 'table';
 
 const { table } = tableImport;
 
-interface ResultData {
-  id: number | string;
-  name: string;
-  symbol: string;
-  website_slug: string;
-  rank: number;
-  circulating_supply: number;
-  total_supply: number;
-  max_supply: number;
-  quotes: object;
-  last_updated: number;
-}
 export const getCryptosList = async (
   api: string,
   url: string
@@ -32,10 +24,15 @@ export const getCryptosList = async (
   return api === 'coingecko' ? result.data : result.data.data;
 };
 
+interface ResultGetCryptosSelection {
+  data: Array<object>;
+  currency: string;
+}
+
 export const getCryptosSelection = async (
   selection: FormattedArgs,
-  options
-) => {
+  options: Options
+): Promise<ResultGetCryptosSelection> => {
   const { cryptosSlected } = selection;
   const result = await requestHandler(
     options.api,
@@ -58,10 +55,13 @@ export const getCryptosSelection = async (
   };
 };
 
-export const displayCryptos = (cryptos, options) => {
+export const displayCryptos = (
+  cryptos: Array<object>,
+  options: Options
+): void => {
   const sortResult = sortCryptoResult(options.filter, cryptos);
   const data = sortResult.reduce(
-    (acc, crypto) => {
+    (acc: Array<object>, crypto: object) => {
       const dataToCapture = recoverDataToCatch(options.api);
       const dataCaptured = customizeCrypto(
         dataToCapture,
